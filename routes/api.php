@@ -13,13 +13,16 @@ use App\Http\Controllers\UserController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+// Public Routes
 //Route::resource('users',UserController::class);
 //Route::resource('product',ProductController::class);
 Route::post('/users/login',[UserController::class,'login']);
 Route::get('/users',[UserController::class,'index']);
 Route::post('/users',[UserController::class,'store']);
-Route::put('/users/{users}', [UserController::class,'update']);
+Route::put('/users/{id}', [UserController::class,'update']);
+Route::delete('/users/{id}', [UserController::class,'destroy']);
+
+// protected routes
 Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::get('/users/{users}',[UserController::class,'show']);
 });

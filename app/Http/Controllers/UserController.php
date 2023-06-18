@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -38,22 +39,24 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'first_name'=>'required',
-            'email'=>'required',
+            'first_name'=>'required|string',
+            'email'=>'required|string|unique:users,email',
             'password'=>'required',
         ]);
+        $fields = $request->all();
         $data = array();
-        $input = array(
-            'first_name'=>$request->post('first_name'),
-            'last_name'=>$request->post('last_name'),
-            'email'=>$request->post('email'),
-            'pasword'=>bcrypt($request->post('password')),
-            'remember_token'=>Str::random(64),
-        );
-        $user = User::create($input);
-        $data['data']=  'Congratulations'.' '.$user->first_name.' '.$user->last_name.' '.'You have been Register Successfully';
-        $data['status'] = '200 OK';
-        return response()->json($data);
+        $user = User::create([
+            'first_name'=> $fields['first_name'],
+            'last_name'=> $fields['last_name'],
+            'email'=> $fields['email'],
+            'pasword'=> bcrypt($fields['first_name']),
+        ]);
+        $token = $user->createToken('myapptoken')->plainTextToken;
+        $response = [
+            'user'=>$user,
+            'token'=>$token
+        ];
+        return response($response,201);
     }
 
     /**
