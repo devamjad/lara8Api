@@ -14,13 +14,15 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::resource('users',UserController::class);
+//Route::resource('users',UserController::class);
 //Route::resource('product',ProductController::class);
 Route::post('/users/login',[UserController::class,'login']);
-// Route::get('/users',[UserController::class,'index']);
-// Route::get('/users/{users}',[UserController::class,'show']);
-// Route::post('/users',[UserController::class,'store']);
-// Route::put('/users/{users}', [UserController::class,'update']);
+Route::get('/users',[UserController::class,'index']);
+Route::post('/users',[UserController::class,'store']);
+Route::put('/users/{users}', [UserController::class,'update']);
+Route::group(['middleware'=>['auth:sanctum']],function(){
+    Route::get('/users/{users}',[UserController::class,'show']);
+});
 
  Route::middleware('auth:api')->get('/user', function (Request $request) {
      return $request->user();
